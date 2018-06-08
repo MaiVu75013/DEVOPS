@@ -1,55 +1,65 @@
-# Base Project
+![docker hub](https://img.shields.io/docker/pulls/richarvey/nginx-php-fpm.svg?style=flat-square)
+![docker hub](https://img.shields.io/docker/stars/richarvey/nginx-php-fpm.svg?style=flat-square)
+![Travis](https://img.shields.io/travis/ngineered/nginx-php-fpm.svg?style=flat-square)
 
-Tous les fichiers se trouvent dans le dossier eval.
+## Overview
+This is a Dockerfile/image to build a container for nginx and php-fpm, with the ability to pull website code from git when the container is created, as well as allowing the container to push and pull changes to the code to and from git. The container also has the ability to update templated files with variables passed to docker in order to update your code and settings. There is support for lets encrypt SSL configurations, custom nginx configs, core nginx/PHP variable overrides for running preferences, X-Forwarded-For headers and UID mapping for local volume support.
 
-Pour lancer le script, il faut se placer dans le dossier eval et 
-taper soit **./start.sh** soit **./start-swarm.sh** pour la version swarm du projet
+If you have improvements or suggestions please open an issue or pull request on the GitHub project page.
 
-Note : Ce script permet de passer par les différentes versions de l'outil V1 à V3 une à une.
+### Versioning
+| Docker Tag | GitHub Release | Nginx Version | PHP Version | Alpine Version |
+|-----|-------|-----|--------|--------|
+| latest | Master Branch |1.12.0 | 7.1.3 | 3.4 |
 
-##  Pour chaque version les étapes suivantes sont réalisées : 
-- Suppressions des précédents containers
-- Suppressions des anciens volumes
-- Choix de la version 1, 2 ou 3
-- Compilation
-- Exécution du docker-compose
+For other tags please see: [versioning](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/versioning.md)
 
-**A la fin du script les containers et volumes sont supprimés.**
+### Links
+- [https://github.com/ngineered/nginx-php-fpm](https://github.com/ngineered/nginx-php-fpm)
+- [https://registry.hub.docker.com/u/richarvey/nginx-php-fpm/](https://registry.hub.docker.com/u/richarvey/nginx-php-fpm/)
 
+## Quick Start
+To pull from docker hub:
+```
+docker pull richarvey/nginx-php-fpm:latest
+```
+### Running
+To simply run the container:
+```
+sudo docker run -d richarvey/nginx-php-fpm
+```
+To dynamically pull code from git when starting:
+```
+docker run -d -e 'GIT_EMAIL=email_address' -e 'GIT_NAME=full_name' -e 'GIT_USERNAME=git_username' -e 'GIT_REPO=github.com/project' -e 'GIT_PERSONAL_TOKEN=<long_token_string_here>' richarvey/nginx-php-fpm:latest
+```
 
-## Version 1
-### Nginx :
-Le container Nginx utilise Nginx 1.13.7 et PHP 7.1.12.
-Les ports exposés sont le 80 et 443
-Le site internet écoute sur www.samplephpwebsite.com
-Pour les besoins le docker-compose lui utilise le port 8080 au lieu du port 80.
-Les volumes exposés sont /var/www/html pour le contenu du site et /var/log/nginx/ pour accéder aux logs
+You can then browse to ```http://<DOCKER_HOST>``` to view the default install files. To find your ```DOCKER_HOST``` use the ```docker inspect``` to get the IP address (normally 172.17.0.2)
 
-### Contenu Web :
-Le site web utilisé est samplephpwebsite version 1
+For more detailed examples and explanations please refer to the documentation.
+## Documentation
 
-## Version 2
-### Nginx :
-Le container Nginx utilise Nginx 1.12.0 et PHP 7.1.3
-Les ports exposés sont le 80 et 443
-Le site internet écoute sur www.samplephpwebsite.com
-Pour les besoins le docker-compose lui utilise le port 8080 au lieu du port 80.
-Les volumes exposés sont /var/www/html pour le contenu du site et /var/log/nginx/ pour accéder aux logs
+- [Building from source](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/building.md)
+- [Versioning](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/versioning.md)
+- [Config Flags](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/config_flags.md)
+- [Git Auth](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/git_auth.md)
+ - [Personal Access token](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/git_auth.md#personal-access-token)
+ - [SSH Keys](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/git_auth.md#ssh-keys)
+- [Git Commands](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/git_commands.md)
+ - [Push](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/git_commands.md#push-code-to-git)
+ - [Pull](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/git_commands.md#pull-code-from-git-refresh)
+- [Repository layout / webroot](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/repo_layout.md)
+ - [webroot](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/repo_layout.md#src--webroot)
+- [User / Group Identifiers](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/UID_GID_Mapping.md)
+- [Custom Nginx Config files](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/nginx_configs.md)
+ - [REAL IP / X-Forwarded-For Headers](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/nginx_configs.md#real-ip--x-forwarded-for-headers)
+- [Scripting and Templating](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/scripting_templating.md)
+ - [Environment Variables](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/scripting_templating.md#using-environment-variables--templating)
+- [Lets Encrypt Support](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/lets_encrypt.md)
+ - [Setup](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/lets_encrypt.md#setup)
+ - [Renewal](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/lets_encrypt.md#renewal)
+- [PHP Modules](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/php_modules.md)
+- [Logging and Errors](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/logs.md)
 
-### Contenu Web :
-Le site web utilisé est samplephpwebsite version 2
-
-## Version 3
-### Nginx :
-Le container Nginx utilise Nginx 1.12.0 et PHP 7.1.3
-Les ports exposés sont le 80 et 443
-Le site internet écoute sur www.samplephpwebsite.com
-Pour les besoins le docker-compose lui utilise le port 8080 au lieu du port 80.
-Les volumes exposés sont /var/www/html pour le contenu du site et /var/log/nginx/ pour accéder aux logs
-
-### Contenu Web :
-Le site web utilisé est samplephpwebsite version 3
-
-### Mariadb :
-La version de mariadb utilisé est mariadb 10.1
-# EVALDEVOPS
+## Guides
+- [Running in Kubernetes](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/guides/kubernetes.md)
+- [Using Docker Compose](https://github.com/ngineered/nginx-php-fpm/blob/master/docs/guides/docker_compose.md)
